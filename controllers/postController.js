@@ -52,37 +52,28 @@ const connection = require('../data/db.js');
 
 //index func
 function index(req, res) {
-  // console.log(req.query);
-  const indexQuery = `SELECT * FROM blog_express.posts`;
-  const posts = connection.query(indexQuery, (err, results) => {
-    if (err) return res.status(500).json({ error: 'query fail' });
+  if (req.query.tags) {
+    const sql = `SELECT * 
+                FROM posts
+                JOIN post_tag AS p_t
+                ON p_t.post_id = posts.id
+                JOIN tags
+                ON p_t.tag_id = tags.id
+                WHERE tags.label = ?`;
 
-    res.json(results);
-  });
+    console.log(sql);
 
-  //ricerca tramite query string con lo slug
-  // let filteredPosts = posts;
-
-  // if (req.query.tags) {
-  //   const queryArray = req.query.tags.split(','); // trasformo i dati da stringa in array separandoli per virgola se presente
-
-  //   const formattedQuery = queryFormat(queryArray); //formattazione query togliendo trattini e rendendo sempre la prima lettera maiuscola
-
-  //   //filtro gli elementi da mostrare
-  //   filteredPosts = posts.filter((post) => {
-  //     //per ogni elemento uso il metodo every sull'array della query string
-  //     return formattedQuery.every((tag) => post.tags.includes(tag)); // il risultato saranno gli array che hanno entrambe le proprieta'
-  //   });
-
-  //   // console.log(formattedQuery);
-  // }
-
-  // const limit = req.query.limit;
-  // if (limit && !isNaN(limit) && limit >= 0) {
-  //   filteredPosts = posts.slice(0, limit);
-  // }
-
-  // res.json(filteredPosts);
+    connection.query(sql, [req.query.tags], (err, results) => {
+      if (err) return res.status(500).json({ error: 'query fail' });
+      res.json(results);
+    });
+  } else {
+    connection.query(sql, (err, results) => {
+      if (err) return res.status(500).json({ error: 'query fail' });
+      // console.log(results);
+      res.json(results);
+    });
+  }
 }
 
 //show func
