@@ -43,40 +43,46 @@ function sendError(res, errorCode, message) {
   });
 }
 
+//database connection
 const connection = require('../data/db.js');
 
-const notFound = require('../middlewares/notFound.js');
-// const express = require('express');
+// const notFound = require('../middlewares/notFound.js');
 
-const posts = require('../posts.js');
+// const posts = require('../posts.js');
 
 //index func
 function index(req, res) {
   // console.log(req.query);
+  const indexQuery = `SELECT * FROM blog_express.posts`;
+  const posts = connection.query(indexQuery, (err, results) => {
+    if (err) return res.status(500).json({ error: 'query fail' });
+
+    res.json(results);
+  });
 
   //ricerca tramite query string con lo slug
-  let filteredPosts = posts;
+  // let filteredPosts = posts;
 
-  if (req.query.tags) {
-    const queryArray = req.query.tags.split(','); // trasformo i dati da stringa in array separandoli per virgola se presente
+  // if (req.query.tags) {
+  //   const queryArray = req.query.tags.split(','); // trasformo i dati da stringa in array separandoli per virgola se presente
 
-    const formattedQuery = queryFormat(queryArray); //formattazione query togliendo trattini e rendendo sempre la prima lettera maiuscola
+  //   const formattedQuery = queryFormat(queryArray); //formattazione query togliendo trattini e rendendo sempre la prima lettera maiuscola
 
-    //filtro gli elementi da mostrare
-    filteredPosts = posts.filter((post) => {
-      //per ogni elemento uso il metodo every sull'array della query string
-      return formattedQuery.every((tag) => post.tags.includes(tag)); // il risultato saranno gli array che hanno entrambe le proprieta'
-    });
+  //   //filtro gli elementi da mostrare
+  //   filteredPosts = posts.filter((post) => {
+  //     //per ogni elemento uso il metodo every sull'array della query string
+  //     return formattedQuery.every((tag) => post.tags.includes(tag)); // il risultato saranno gli array che hanno entrambe le proprieta'
+  //   });
 
-    console.log(formattedQuery);
-  }
+  //   // console.log(formattedQuery);
+  // }
 
-  const limit = req.query.limit;
-  if (limit && !isNaN(limit) && limit >= 0) {
-    filteredPosts = posts.slice(0, limit);
-  }
+  // const limit = req.query.limit;
+  // if (limit && !isNaN(limit) && limit >= 0) {
+  //   filteredPosts = posts.slice(0, limit);
+  // }
 
-  res.json(filteredPosts);
+  // res.json(filteredPosts);
 }
 
 //show func
@@ -84,7 +90,7 @@ function show(req, res) {
   const id = req.params.id; //parametro dinamico
   // console.log(id);
 
-  console.log(id);
+  // console.log(id);
 
   let filteredPost;
 
