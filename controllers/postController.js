@@ -43,6 +43,8 @@ function sendError(res, errorCode, message) {
   });
 }
 
+const connection = require('../data/db.js');
+
 const notFound = require('../middlewares/notFound.js');
 // const express = require('express');
 
@@ -84,17 +86,6 @@ function show(req, res) {
 
   console.log(id);
 
-  // if (isNaN(id)) {
-  //   const slug = req.params.id;
-  //   console.log(slug);
-
-  //   let filteredPost = posts.find((post) => {
-  //     return post.slug === slug;
-  //   });
-
-  //   res.json(filteredPost); //output
-  //   return;
-  // }
   let filteredPost;
 
   if (typeof id === 'string') {
